@@ -71,6 +71,25 @@ const createServer = () => {
     }
     res.send(pokemon);
   });
+  app.get("/api/pokemons/:idOrName/evolutions", (req, res) => {
+    const { idOrName } = req.params;
+    let evolutionArray = [];
+    function findEvolutions(index) {
+      evolutionArray = pokemon[index].evolutions;
+    }
+    for (let i = 0; i < pokemon.length; i++) {
+      if (~~idOrName > 1) {
+        if (~~pokemon[i].id === ~~idOrName) {
+          findEvolutions(i);
+          break;
+        }
+      } else if (pokemon[i].name.toLowerCase() === idOrName.toLowerCase()) {
+        findEvolutions(i);
+        break;
+      }
+    }
+    res.send(evolutionArray);
+  });
 
   return app;
 };
