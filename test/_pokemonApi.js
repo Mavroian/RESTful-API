@@ -35,7 +35,7 @@ describe("Pokemon API Server", () => {
     it("should add a Pokemon.", async () => {
       const poke = pokemon[0];
       const res = await request.post("/api/pokemons").send(poke);
-
+      console.log(res.text);
       JSON.parse(res.text).should.eql(poke);
     });
   });
@@ -70,7 +70,22 @@ describe("Pokemon API Server", () => {
       const res = await request
         .patch("/api/pokemons/Mew")
         .send({ name: "Meeeeeew" });
-      let expect = { name: "Meeeeeew" };
+      const expect = { name: "Meeeeeew" };
+      const pokemonUpdated = JSON.parse(res.text);
+      pokemonUpdated.name.should.eql(expect.name);
+    });
+  });
+  describe("DELETE /api/pokemons/:idOrName", () => {
+    it("should delete the given Pokemon", async () => {
+      const resTwo = await request.delete("/api/pokemons/150"); // MewTwo
+      const arrayPokemon = JSON.parse(resTwo.text);
+      const pokemon148 = arrayPokemon[148].id;
+      const pokemon149 = arrayPokemon[149].id;
+      pokemon148.should.eql("149");
+      pokemon149.should.eql("151");
+
+      // const res = await request.delete("/api/pokemons/Mew");
+      // JSON.parse(res.text).should.be.undefined;
     });
   });
 });
