@@ -70,12 +70,7 @@ describe("Pokemon API Server", () => {
       const res = await request
         .patch("/api/pokemons/Mew")
         .send({ name: "Meeeeeew" });
-      let expect = 0;
-      for (const poke of pokemon) {
-        if (poke.name === "Mew") {
-          expect = poke;
-        }
-      }
+      let expect = { name: "Meeeeeew" };
     });
   });
 });
