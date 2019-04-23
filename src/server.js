@@ -33,8 +33,6 @@ const createServer = () => {
       }
     }
   });
-
-  app.use(express.json());
   app.patch("/api/pokemons/:idOrName", (req, res) => {
     const { idOrName } = req.params;
     const changeThisPokemon = req.body;
@@ -196,7 +194,56 @@ const createServer = () => {
       }
     }
   });
+  app.get("/api/attacks/:name/pokemon", (req, res) => {
+    const { name } = req.params;
+    const array = [];
+    const returnedObj = {};
+    for (const key in pokemon.attacks) {
+      for (const type of pokemon.attacks[key]) {
+        if (type.name === name) {
+          returnedObj.name = pokemon.name;
+          returnedObj.id = pokemon.id;
+          array.push(returnedObj);
+        }
+      }
+    }
+    res.send(returnedObj);
+  });
+  app.post("/api/attacks/fast", (req, res) => {
+    const query = req.body;
+    attacks.fast.push(query);
+    res.send(attacks.fast[attacks.fast.length - 1]);
+  });
+  app.post("/api/attacks/special", (req, res) => {
+    const query = req.body;
+    attacks.special.push(query);
+    res.send(attacks.special[attacks.special.length - 1]);
+  });
+  app.patch("/api/attacks/:name", (req, res) => {
+    const { name } = req.params;
+    const obj = req.body;
 
+    for (const type in attacks) {
+      for (const attack of attacks[type]) {
+        if (attack.name === name) {
+          Object.assign(attack, obj);
+          res.send(attack);
+        }
+      }
+    }
+  });
+  app.delete("/api/attacks/:name", (req, res) => {
+    let deleted = 0;
+    const { name } = req.params;
+    for (const type in attacks) {
+      for (let i = 0; i < attacks[type].length; i++) {
+        if (attacks[type][i].name === name) {
+          deleted = attacks[type].splice(i, 1);
+        }
+      }
+    }
+    res.send(deleted[0]);
+  });
   return app;
 };
 module.exports = { createServer };

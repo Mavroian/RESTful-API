@@ -4,6 +4,7 @@ chai.use(chaiHttp);
 const { createServer } = require("../src/server");
 chai.should();
 const { pokemon, attacks, types } = require("../src/data/index");
+const expect = require("chai").expect;
 /*
  * This sprint you will have to create all tests yourself, TDD style.
  * For this you will want to get familiar with chai-http https://www.chaijs.com/plugins/chai-http/
@@ -42,26 +43,26 @@ describe("Pokemon API Server", () => {
     it("should return the Pokemon with the given id.", async () => {
       const res = await request.get("/api/pokemons/42");
       res.should.be.json;
-      let expect;
+      let expected;
       for (const poke of pokemon) {
         if (poke.id === "042") {
-          expect = poke;
+          expected = poke;
         }
       }
-      JSON.parse(res.text).should.eql(expect);
+      JSON.parse(res.text).should.eql(expected);
     });
   });
   describe("GET /api/pokemons/:name", () => {
     it("It should return the Pokemon with given name.", async () => {
-      let expect = 0;
+      let expected = 0;
       for (const poke of pokemon) {
         if (poke.name === "Mew") {
-          expect = poke;
+          expected = poke;
         }
       }
       const res = await request.get("/api/pokemons/Mew");
       res.should.be.json;
-      JSON.parse(res.text).should.eql(expect);
+      JSON.parse(res.text).should.eql(expected);
     });
   });
   describe("PATCH /api/pokemons/:idOrName", () => {
@@ -69,9 +70,9 @@ describe("Pokemon API Server", () => {
       const res = await request
         .patch("/api/pokemons/Mew")
         .send({ name: "Meeeeeew" });
-      const expect = { name: "Meeeeeew" };
+      const expected = { name: "Meeeeeew" };
       const pokemonUpdated = JSON.parse(res.text);
-      pokemonUpdated.name.should.eql(expect.name);
+      pokemonUpdated.name.should.eql(expected.name);
     });
   });
   describe("DELETE /api/pokemons/:idOrName", () => {
@@ -90,7 +91,7 @@ describe("Pokemon API Server", () => {
   describe("GET /api/pokemon/:idOrName/evolutions", () => {
     it("should return the evolutions a Pokemon has", async () => {
       const res = await request.get("/api/pokemons/133/evolutions"); // MewTwo
-      const expect = [
+      const expected = [
         {
           id: 134,
           name: "Vaporeon",
@@ -104,26 +105,26 @@ describe("Pokemon API Server", () => {
           name: "Flareon",
         },
       ];
-      JSON.parse(res.text).should.eql(expect);
+      JSON.parse(res.text).should.eql(expected);
     });
   });
   describe("GET /api/pokemon/:idOrName/evolutions/previous", () => {
     it("should return the previous evolutions a Pokemon has", async () => {
       const res = await request.get("/api/pokemons/134/evolutions/previous");
-      const expect = [
+      const expected = [
         {
           id: 133,
           name: "Eevee",
         },
       ];
-      JSON.parse(res.text).should.eql(expect);
+      JSON.parse(res.text).should.eql(expected);
     });
   });
   describe("GET /api/types", () => {
     it("It should return a list of all available types", async () => {
       const res = await request.get("/api/types");
-      const expect = types;
-      JSON.parse(res.text).should.eql(expect);
+      const expected = types;
+      JSON.parse(res.text).should.eql(expected);
     });
     it("should b able to take a query parameter 'limit=n'", async () => {
       const res = await request.get("/api/types/").query({ limit: 5 });
@@ -141,8 +142,10 @@ describe("Pokemon API Server", () => {
         type: "Butterfly",
       };
       const res = await request.post("/api/types/").send(obj);
-      const expect = "Butterfly";
-      JSON.parse(res.text)[JSON.parse(res.text).length - 1].should.eql(expect);
+      const expected = "Butterfly";
+      JSON.parse(res.text)[JSON.parse(res.text).length - 1].should.eql(
+        expected
+      );
     });
   });
   describe("DELETE /api/types", () => {
@@ -150,31 +153,33 @@ describe("Pokemon API Server", () => {
       const res = await request
         .delete("/api/types/")
         .query({ type: "Butterfly" });
-      const expect = "Dragon";
+      const expected = "Dragon";
       JSON.parse(res.text).length.should.eql(17);
-      JSON.parse(res.text)[JSON.parse(res.text).length - 1].should.eql(expect);
+      JSON.parse(res.text)[JSON.parse(res.text).length - 1].should.eql(
+        expected
+      );
     });
   });
   describe("GET /api/types/:type/pokemons", () => {
     it("should return all Pokemon that are of a given type", async () => {
       const res = await request.get("/api/types/Flying/pokemons");
-      const expect = [];
+      const expected = [];
       const obj = {};
       for (const poke of pokemon) {
         if (poke.type === "Flying") {
           obj.id = poke.id;
           obj.name = poke.name;
-          expect.push(obj);
+          expected.push(obj);
         }
       }
-      JSON.parse(res.text).should.eql(expect);
+      JSON.parse(res.text).should.eql(expected);
     });
   });
   describe("GET /api/attacks", () => {
     it("should return a list of all attacks ", async () => {
       const res = await request.get("/api/attacks");
-      const expect = attacks;
-      JSON.parse(res.text).should.eql(expect);
+      const expected = attacks;
+      JSON.parse(res.text).should.eql(expected);
     });
     it("should be able to take a query parameter 'limit=n'", async () => {
       const res = await request.get("/api/attacks/").query({ limit: 5 });
@@ -191,8 +196,8 @@ describe("Pokemon API Server", () => {
   describe("GET /api/attacks/fast", () => {
     it("should return a list of all fast attacks ", async () => {
       const res = await request.get("/api/attacks/fast");
-      const expect = attacks.fast;
-      JSON.parse(res.text).should.eql(expect);
+      const expected = attacks.fast;
+      JSON.parse(res.text).should.eql(expected);
     });
     it("should be able to take a query parameter 'limit=n'", async () => {
       const res = await request.get("/api/attacks/fast").query({ limit: 5 });
@@ -207,8 +212,8 @@ describe("Pokemon API Server", () => {
   describe("GET /api/attacks/special", () => {
     it("should return a list of all special attacks ", async () => {
       const res = await request.get("/api/attacks/special");
-      const expect = attacks.special;
-      JSON.parse(res.text).should.eql(expect);
+      const expected = attacks.special;
+      JSON.parse(res.text).should.eql(expected);
     });
     it("should be able to take a query parameter 'limit=n'", async () => {
       const res = await request.get("/api/attacks/special").query({ limit: 5 });
@@ -241,17 +246,84 @@ describe("Pokemon API Server", () => {
     });
   });
   describe("GET /api/attacks/:name/pokemon", () => {
-    it("should returns all Pokemon (id and name) that have an attack with the given name", async () => {
+    it("should return all Pokemon (id and name) that have an attack with the given name", async () => {
       const res = await request.get("/api/attacks/Psycho Cut/pokemon");
       const arry = [];
-      const expect = pokemon.filter((poke) => {
-        for (const key in poke.attacks) {
-          for (const type of poke.attacks[key]) {
-            if (type.name === "Zen Headbutt") arry.push(poke);
+      const expected = {};
+
+      for (const key in pokemon.attacks) {
+        for (const type of pokemon.attacks[key]) {
+          if (type.name === "Zen Headbutt") {
+            expected.name = pokemon.name;
+            expected.id = pokemon.id;
+            arry.push(expected);
           }
         }
-      });
-      console.log(arry);
+      }
+      JSON.parse(res.text).should.eql(expected);
+    });
+  });
+
+  describe("`POST /api/attacks/fast` or `POST /api/attacks/special`", () => {
+    it("Add a fast attack", async () => {
+      const fakeObj = {
+        name: "Back Stab",
+        type: "Steel",
+        damage: 50,
+      };
+      const res = await request.post("/api/attacks/fast").send(fakeObj);
+
+      attacks.fast.push(fakeObj);
+
+      JSON.parse(res.text).should.eql(attacks.fast[attacks.fast.length - 1]);
+    });
+    it("Add a special attack", async () => {
+      const fakeObj = {
+        name: "Lightning Strike",
+        type: "Nature",
+        damage: 100,
+      };
+      const res = await request.post("/api/attacks/special").send(fakeObj);
+
+      attacks.special.push(fakeObj);
+
+      JSON.parse(res.text).should.eql(
+        attacks.special[attacks.special.length - 1]
+      );
+    });
+  });
+  describe("PATCH /api/attacks/:name", () => {
+    it("should modifies specified attack", async () => {
+      const fakeObj = {
+        name: "Love Bomb",
+        type: "Normal",
+        damage: 40,
+      };
+      const res = await request.patch("/api/attacks/Seed Bomb").send(fakeObj);
+      for (const type in attacks) {
+        for (const attack of attacks[type]) {
+          if (attack.name === "Seed Bomb") {
+            Object.assign(attack, fakeObj);
+          }
+        }
+      }
+      JSON.parse(res.text).should.eql(fakeObj);
+    });
+  });
+  describe("DELETE /api/attacyardks/:name", () => {
+    it("should delete an attack", async () => {
+      let expected = 0;
+      for (const type in attacks) {
+        for (let i = 0; i < attacks[type].length; i++) {
+          if (attacks[type][i].name === "Power Whip") {
+            expected = attacks[type][i];
+          }
+        }
+      }
+
+      const res = await request.delete("/api/attacks/Power Whip");
+      expect(attacks.special[0].name).to.eql("Love Bomb");
+      JSON.parse(res.text).should.eql(expected);
     });
   });
 });
